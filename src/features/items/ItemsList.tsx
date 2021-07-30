@@ -1,14 +1,14 @@
-import React from "react";
-import { Link, RouteComponentProps } from "react-router-dom";
-import { useAppSelector } from "../../app/hooks";
-import { selectAllItems } from "./itemsSlice";
+import React from 'react'
+import { Link, RouteComponentProps } from 'react-router-dom'
+import { useAppSelector } from '../../app/hooks'
+import { selectAllItems } from './itemsSlice'
 
 const ItemsList = ({ history }: RouteComponentProps) => {
-  const allItems = useAppSelector(selectAllItems);
+  const allItems = useAppSelector(selectAllItems)
 
   return (
     <div>
-      <button onClick={() => history.push("/items/new")}>
+      <button onClick={() => history.push('/items/new')}>
         Cadastrar novo item
       </button>
       <table>
@@ -41,7 +41,7 @@ const ItemsList = ({ history }: RouteComponentProps) => {
         </tbody>
       </table>
     </div>
-  );
-};
+  )
+}
 
-export default ItemsList;
+export default ItemsList

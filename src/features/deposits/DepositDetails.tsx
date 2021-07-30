@@ -1,28 +1,29 @@
-import React from "react";
-import { Link, RouteComponentProps } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { Compartment, Item } from "../../models";
-import { selectCompartmentByDeposit } from "../compartments/compartmentsSlice";
+import React from 'react'
+import { Link, RouteComponentProps } from 'react-router-dom'
+import { useAppDispatch, useAppSelector } from '../../app/hooks'
+import { Compartment, Item } from '../../models'
+import {
+  setCompartmentActiveness,
+  selectCompartmentByDeposit
+} from '../compartments/compartmentsSlice'
 import {
   addItemToCompartment,
   removeItemFromCompartment,
   selectAllItems
-} from "../items/itemsSlice";
-import { selectDepositById } from "./depositsSlice";
+} from '../items/itemsSlice'
+import { selectDepositById } from './depositsSlice'
 
 const DepositDetails = ({
   match,
   history
 }: RouteComponentProps<{ id: string }>) => {
-  const { params } = match;
-  const dispatch = useAppDispatch();
-  const deposit = useAppSelector((state) =>
-    selectDepositById(state, params.id)
-  );
+  const { params } = match
+  const dispatch = useAppDispatch()
+  const deposit = useAppSelector((state) => selectDepositById(state, params.id))
   const compartments = useAppSelector((state) =>
     selectCompartmentByDeposit(state, params.id)
-  );
-  const allItems = useAppSelector(selectAllItems);
+  )
+  const allItems = useAppSelector(selectAllItems)
 
   const handleAddClick = (item_id: string, compartment: Compartment) => (
     e: React.MouseEvent<HTMLButtonElement>
@@ -33,8 +34,8 @@ const DepositDetails = ({
         compartment,
         quantity: 1
       })
-    );
-  };
+    )
+  }
 
   const handleRemoveClick = (
     item_id: string,
@@ -47,11 +48,19 @@ const DepositDetails = ({
         compartment,
         quantity
       })
-    );
-  };
+    )
+  }
+
+  const handleDeactivateCompartment = (compartment: Compartment) => {
+    dispatch(setCompartmentActiveness({ compartment, active: false }))
+  }
+
+  const handleActivateCompartment = (compartment: Compartment) => {
+    dispatch(setCompartmentActiveness({ compartment, active: true }))
+  }
 
   if (!deposit) {
-    return <h3>Depósito não encontrado!</h3>;
+    return <h3>Depósito não encontrado!</h3>
   }
 
   return (
@@ -61,47 +70,55 @@ const DepositDetails = ({
         Cadastrar Compartimento
       </button>
       <h4>
-        {compartments.length} compartimento
-        {compartments.length !== 1 && "s"}{" "}
+        {compartments.filter((compartment) => compartment.active).length}{' '}
+        compartimento
+        {compartments.filter((compartment) => compartment.active).length !==
+          1 && 's'}{' '}
+        ativo
+        {compartments.filter((compartment) => compartment.active).length !==
+          1 && 's'}{' '}
       </h4>
       {compartments.map((compartment) => {
-        const itemKeys = compartment.items
-          ? Object.keys(compartment.items)
-          : [];
-        const s = itemKeys && itemKeys.length !== 1 && "s";
+        if (!compartment.active) return null
+
+        const itemKeys = compartment.items ? Object.keys(compartment.items) : []
+        const s = itemKeys && itemKeys.length !== 1 && 's'
 
         return (
           <React.Fragment key={compartment.id}>
             <h5>
-              {compartment.location.toUpperCase()} [{itemKeys.length} item{s}{" "}
-              distinto{s}]{" "}
-              <button
-                onClick={() => history.push(`/compartments/${compartment.id}`)}
-              >
-                + informações
-              </button>{" "}
+              {compartment.location.toUpperCase()} [{itemKeys.length} item{s}{' '}
+              distinto{s}]{' '}
               <button
                 onClick={() => history.push(`/items/add/${compartment.id}`)}
               >
                 Adicionar item
+              </button>{' '}
+              <button
+                onClick={() => history.push(`/compartments/${compartment.id}`)}
+              >
+                + informações
+              </button>{' '}
+              <button onClick={() => handleDeactivateCompartment(compartment)}>
+                Desativar compartimento
               </button>
             </h5>
             {itemKeys.length > 0 &&
               itemKeys.map((ik) => {
                 const [item] = allItems.filter(
                   (item) => item.id === ik
-                ) as Item[];
+                ) as Item[]
                 return (
                   <span key={ik}>
                     <Link to={`/items/${item?.id}`}>
                       <small>{`${compartment?.items[ik]}x ${item?.name}`}</small>
-                    </Link>{" "}
+                    </Link>{' '}
                     <button onClick={handleRemoveClick(item?.id, compartment)}>
                       -
-                    </button>{" "}
+                    </button>{' '}
                     <button onClick={handleAddClick(item?.id, compartment)}>
                       +
-                    </button>{" "}
+                    </button>{' '}
                     <button
                       onClick={handleRemoveClick(
                         item?.id,
@@ -113,13 +130,58 @@ const DepositDetails = ({
                     </button>
                     <br />
                   </span>
-                );
+                )
               })}
           </React.Fragment>
-        );
+        )
+      })}
+      <h4>
+        {compartments.filter((compartment) => !compartment.active).length}{' '}
+        compartimento
+        {compartments.filter((compartment) => !compartment.active).length !==
+          1 && 's'}{' '}
+        desativado
+        {compartments.filter((compartment) => !compartment.active).length !==
+          1 && 's'}{' '}
+      </h4>
+      {compartments.map((compartment) => {
+        if (compartment.active) return null
+
+        const itemKeys = compartment.items ? Object.keys(compartment.items) : []
+        const s = itemKeys && itemKeys.length !== 1 && 's'
+
+        return (
+          <React.Fragment key={compartment.id}>
+            <h5>
+              {compartment.location.toUpperCase()}{' '}
+              <button
+                onClick={() => history.push(`/compartments/${compartment.id}`)}
+              >
+                + informações
+              </button>{' '}
+              <button onClick={() => handleActivateCompartment(compartment)}>
+                Ativar compartimento
+              </button>
+            </h5>
+            {itemKeys.length > 0 &&
+              itemKeys.map((ik) => {
+                const [item] = allItems.filter(
+                  (item) => item.id === ik
+                ) as Item[]
+                return (
+                  <span key={ik}>
+                    <Link to={`/items/${item?.id}`}>
+                      <small>{`${compartment?.items[ik]}x ${item?.name}`}</small>
+                    </Link>{' '}
+                    <br />
+                  </span>
+                )
+              })}
+          </React.Fragment>
+        )
       })}
     </div>
-  );
-};
+  )
+}
 
-export default DepositDetails;
+export default DepositDetails

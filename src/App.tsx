@@ -1,6 +1,6 @@
-import React from "react";
-import { BrowserRouter, Route, Switch } from "react-router-dom";
-import TheContainer from "./app/containers/TheContainer";
+import React from 'react'
+import { BrowserRouter, Route, Switch } from 'react-router-dom'
+import TheContainer from './app/containers/TheContainer'
 
 const App = () => {
   return (
@@ -9,7 +9,7 @@ const App = () => {
       <Route path="/" render={(props) => <TheContainer {...props} />} />
       {/** </Switch> */}
     </BrowserRouter>
-  );
-};
+  )
+}
 
-export default App;
+export default App

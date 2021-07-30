@@ -1,7 +1,7 @@
-import React from "react";
+import React from 'react'
 
 const TheAppbar = () => {
-  return <h4>Storage Management</h4>;
-};
+  return <h4>Storage Management</h4>
+}
 
-export default TheAppbar;
+export default TheAppbar

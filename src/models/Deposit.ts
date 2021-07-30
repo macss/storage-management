@@ -1,11 +1,11 @@
 interface Deposit {
-  code: string;
+  code: string
   compartments?: {
-    [key: string]: boolean;
-  };
-  created_at: number;
-  id: string;
-  name: string;
+    [key: string]: boolean
+  }
+  created_at: number
+  id: string
+  name: string
 }
 
-export default Deposit;
+export default Deposit

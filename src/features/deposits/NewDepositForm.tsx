@@ -1,17 +1,17 @@
-import { unwrapResult } from "@reduxjs/toolkit";
-import React, { useState } from "react";
-import { useHistory } from "react-router-dom";
-import { useAppDispatch } from "../../app/hooks";
-import { Deposit } from "../../models";
-import { addDeposit } from "./depositsSlice";
+import { unwrapResult } from '@reduxjs/toolkit'
+import React, { useState } from 'react'
+import { useHistory } from 'react-router-dom'
+import { useAppDispatch } from '../../app/hooks'
+import { Deposit } from '../../models'
+import { addDeposit } from './depositsSlice'
 
 const NewDepositForm = () => {
-  const dispatch = useAppDispatch();
-  const history = useHistory();
+  const dispatch = useAppDispatch()
+  const history = useHistory()
   const [data, setData] = useState<{ code: string; name: string }>({
-    code: "",
-    name: ""
-  });
+    code: '',
+    name: ''
+  })
 
   const handleChange = (field: keyof typeof data) => (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -19,18 +19,17 @@ const NewDepositForm = () => {
     setData((v) => ({
       ...v,
       [field]: e.target.value
-    }));
-  };
+    }))
+  }
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+    e.preventDefault()
     dispatch(addDeposit((data as unknown) as Deposit))
       .then(unwrapResult)
       .then((result) => {
-        if (result.code === "addDeposit/success")
-          history.push("/deposits/list");
-      });
-  };
+        if (result.code === 'addDeposit/success') history.push('/deposits/list')
+      })
+  }
 
   return (
     <form onSubmit={handleSubmit}>
@@ -38,21 +37,21 @@ const NewDepositForm = () => {
         type="text"
         placeholder="Código do Depósito"
         value={data.code}
-        onChange={handleChange("code")}
+        onChange={handleChange('code')}
         required
-      />{" "}
+      />{' '}
       <br />
       <input
         type="text"
         placeholder="Nome do depósito"
         value={data.name}
-        onChange={handleChange("name")}
+        onChange={handleChange('name')}
         required
-      />{" "}
+      />{' '}
       <br />
       <button type="submit">Confirmar cadastro</button>
     </form>
-  );
-};
+  )
+}
 
-export default NewDepositForm;
+export default NewDepositForm

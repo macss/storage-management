@@ -4,78 +4,92 @@ import {
   createSlice,
   createSelector,
   PayloadAction
-} from "@reduxjs/toolkit";
-import { RootState } from "../../app/store";
-import { Compartment } from "../../models";
-import Services from "../../services/firebaseServices";
-import { InitialState, ModelObj } from "../commonTypes";
+} from '@reduxjs/toolkit'
+import { RootState } from '../../app/store'
+import { Compartment } from '../../models'
+import Services from '../../services/firebaseServices'
+import { InitialState, ModelObj } from '../commonTypes'
 
 // Initial configuration
 const compartmentsAdapter = createEntityAdapter<Compartment>({
   selectId: (compartment) => compartment.id,
   sortComparer: (a, b) => a.location.localeCompare(b.location)
-});
+})
 
 const initialState = compartmentsAdapter.getInitialState<InitialState>({
-  status: "idle",
+  status: 'idle',
   error: undefined
-});
+})
 
 // Thunks
 export const fetchCompartments = createAsyncThunk(
-  "compartments/fetchCompartments",
+  'compartments/fetchCompartments',
   (_, { dispatch }) => {
     Services.listenToDb((data) => {
-      dispatch(databaseChanged(data));
-    }, "compartments");
+      dispatch(databaseChanged(data))
+    }, 'compartments')
   }
-);
+)
 
 export const addNewCompartment = createAsyncThunk(
-  "compartments/addNewCompartment",
+  'compartments/addNewCompartment',
   (compartment: Compartment) => {
-    const response = Services.addNewCompartment(compartment);
-    return response;
+    const response = Services.addNewCompartment(compartment)
+    return response
   }
-);
+)
+
+export const setCompartmentActiveness = createAsyncThunk(
+  'compartments/deactivateCompartment',
+  ({ compartment, active }: { compartment: Compartment; active: boolean }) => {
+    const update = {
+      [`/compartments/${compartment.id}`]: {
+        ...compartment,
+        active
+      }
+    }
+    const response = Services.updateData(update)
+    return response
+  }
+)
 
 // Slice
 const compartmentsSlice = createSlice({
-  name: "compartments",
+  name: 'compartments',
   initialState,
   reducers: {
     databaseChanged(state, action: PayloadAction<ModelObj<Compartment>>) {
       if (action.payload) {
-        compartmentsAdapter.setAll(state, action.payload);
+        compartmentsAdapter.setAll(state, action.payload)
       } else {
-        compartmentsAdapter.removeAll(state);
+        compartmentsAdapter.removeAll(state)
       }
     }
   },
   extraReducers: (builder) => {
     builder.addCase(fetchCompartments.pending, (state, _) => {
-      state.status = "loading";
-    });
+      state.status = 'loading'
+    })
     builder.addCase(fetchCompartments.rejected, (state, _) => {
-      state.status = "failed";
-    });
+      state.status = 'failed'
+    })
   }
-});
+})
 
-export default compartmentsSlice.reducer;
+export default compartmentsSlice.reducer
 
-export const { databaseChanged } = compartmentsSlice.actions;
+export const { databaseChanged } = compartmentsSlice.actions
 
 // Default Selectors
 export const {
   selectAll: selectAllCompartmens,
   selectById: selectCompartmentById,
   selectIds: selectCompartmentsIds
-} = compartmentsAdapter.getSelectors<RootState>((state) => state.compartments);
+} = compartmentsAdapter.getSelectors<RootState>((state) => state.compartments)
 
 // Custom Selectors
 export const selectCompartmentByDeposit = createSelector(
   [selectAllCompartmens, (_: RootState, depositId: string) => depositId],
   (compartments, depositId) =>
     compartments.filter((compartment) => compartment.deposit_id === depositId)
-);
+)

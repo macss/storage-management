@@ -1,7 +1,7 @@
-import React from "react";
+import React from 'react'
 
 const Main = () => {
-  return <div>Bem-vindo {process.env.TESTE}</div>;
-};
+  return <div>Bem-vindo</div>
+}
 
-export default Main;
+export default Main
