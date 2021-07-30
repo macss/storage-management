@@ -1,38 +1,31 @@
 import { unwrapResult } from "@reduxjs/toolkit";
-import React, { useState } from "react";
-import { useHistory } from "react-router-dom";
-import { useAppDispatch } from "../../app/hooks";
+import React, { useEffect, useState } from "react";
+import { useHistory, useParams } from "react-router-dom";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { Item } from "../../models";
 import { itemTypes } from "../../models/Item";
-import { addNewItem } from "./itemsSlice";
+import { selectItemById, updateItemInfo } from "./itemsSlice";
 
-const NewItemForm = () => {
-  const [data, setData] = useState<{
-    name: string;
-    sap_code: string;
-    supplier_code: string;
-    type: string;
-    details: string;
-  }>({
+const EditItemInfo = () => {
+  const { id } = useParams<{ id: string }>();
+  const dispatch = useAppDispatch();
+  const history = useHistory();
+  const item = useAppSelector((state) => selectItemById(state, id));
+  const [data, setData] = useState<Item>({
     name: "",
     sap_code: "",
     supplier_code: "",
-    type: "",
+    id: "",
+    created_at: 1,
+    type: "outros",
     details: ""
   });
-  const dispatch = useAppDispatch();
-  const history = useHistory();
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    dispatch(addNewItem((data as unknown) as Item))
-      .then(unwrapResult)
-      .then((data) => {
-        if (data.code === "addItem/success") {
-          history.push(`/items/list`);
-        }
-      });
-  };
+  useEffect(() => {
+    if (item) setData(item as Item);
+  }, [item]);
+
+  if (!item) return <div>Item não cadastrado.</div>;
 
   const handleChange = (field: keyof typeof data) => (
     e: React.ChangeEvent<
@@ -43,6 +36,17 @@ const NewItemForm = () => {
       ...v,
       [field]: e.target.value
     }));
+  };
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    dispatch(updateItemInfo(data))
+      .then(unwrapResult)
+      .then((result) => {
+        if (result.code === "updateData/success") {
+          history.push(`/items/${id}`);
+        }
+      });
   };
 
   return (
@@ -86,9 +90,9 @@ const NewItemForm = () => {
         value={data.details}
       />
       <br />
-      <button type="submit">Cadastrar</button>
+      <button type="submit">Salvar alterações</button>
     </form>
   );
 };
 
-export default NewItemForm;
+export default EditItemInfo;

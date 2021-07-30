@@ -1,5 +1,4 @@
 interface Deposit {
-  capacity: number;
   code: string;
   compartments?: {
     [key: string]: boolean;

@@ -9,7 +9,9 @@ const DepositsList = () => {
   return (
     <ul>
       {deposits.map((deposit, idx) => {
-        const compartments = Object.keys(deposit.compartments).length;
+        const compartments = deposit?.compartments
+          ? Object.keys(deposit?.compartments).length
+          : 0;
 
         return (
           <li key={idx}>

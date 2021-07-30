@@ -1,5 +1,5 @@
 import React from "react";
-import { RouteComponentProps } from "react-router-dom";
+import { Link, RouteComponentProps } from "react-router-dom";
 import { useAppSelector } from "../../app/hooks";
 import { selectAllItems } from "./itemsSlice";
 
@@ -16,6 +16,8 @@ const ItemsList = ({ history }: RouteComponentProps) => {
           <tr>
             <th>Nome do Item</th>
             <th />
+            <th>Tipo do Item</th>
+            <th />
             <th>Cód. SAP</th>
             <th />
             <th>Cód. Fornecedor</th>
@@ -25,7 +27,11 @@ const ItemsList = ({ history }: RouteComponentProps) => {
           {allItems.length > 0 &&
             allItems.map((item) => (
               <tr key={item.id}>
-                <td>{item.name}</td>
+                <td>
+                  <Link to={`/items/${item.id}`}>{item.name}</Link>
+                </td>
+                <td />
+                <td>{String(item.type).toUpperCase()}</td>
                 <td />
                 <td>{item.sap_code}</td>
                 <td />

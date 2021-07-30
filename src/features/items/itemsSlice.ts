@@ -5,8 +5,8 @@ import {
   PayloadAction
 } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
-import { Item } from "../../models";
-import Services from "../../services/firebaseServices";
+import { Compartment, Item } from "../../models";
+import FirebaseServices from "../../services/firebaseServices";
 import { InitialState, ModelObj } from "../commonTypes";
 
 // Initial configuration
@@ -24,9 +24,52 @@ const initialState = itemsAdapter.getInitialState<InitialState>({
 export const fetchItems = createAsyncThunk(
   "items/fetchItems",
   (_, { dispatch }) => {
-    Services.listenToDb((data) => {
+    FirebaseServices.listenToDb((data) => {
       dispatch(databaseChanged(data));
     }, "items");
+  }
+);
+
+export const addNewItem = createAsyncThunk(
+  "items/addNewItem",
+  async (item: Item) => {
+    const response = await FirebaseServices.addNewItem(item);
+    return response;
+  }
+);
+
+export const addItemToCompartment = createAsyncThunk(
+  "items/addItemToCompartment",
+  async (info: {
+    item_id: string;
+    quantity: string | number;
+    compartment: Compartment;
+  }) => {
+    const response = await FirebaseServices.addItemToCompartment(info);
+    return response;
+  }
+);
+
+export const removeItemFromCompartment = createAsyncThunk(
+  "items/removeItemFromCompartment",
+  async (info: {
+    item_id: string;
+    quantity: string | number;
+    compartment: Compartment;
+  }) => {
+    const response = await FirebaseServices.removeItemFromCompartment(info);
+    return response;
+  }
+);
+
+export const updateItemInfo = createAsyncThunk(
+  "items/updateItemInfo",
+  async (item: Item) => {
+    const updates = {
+      [`/items/${item.id}`]: item
+    };
+    const response = await FirebaseServices.updateData(updates);
+    return response;
   }
 );
 

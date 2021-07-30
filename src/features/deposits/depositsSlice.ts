@@ -12,7 +12,7 @@ import { InitialState, ModelObj } from "../commonTypes";
 // Initial configuration
 const depositsAdapter = createEntityAdapter<Deposit>({
   selectId: (deposit) => deposit.id,
-  sortComparer: (a, b) => a.name.localeCompare(b.name)
+  sortComparer: (a, b) => a.name?.localeCompare(b.name)
 });
 
 const initialState = depositsAdapter.getInitialState<InitialState>({
@@ -27,6 +27,14 @@ export const fetchDeposits = createAsyncThunk(
     Services.listenToDb((data) => {
       dispatch(databaseChanged(data));
     }, "deposits");
+  }
+);
+
+export const addDeposit = createAsyncThunk(
+  "deposits/addDeposit",
+  (deposit: Deposit) => {
+    const response = Services.addDeposit(deposit);
+    return response;
   }
 );
 

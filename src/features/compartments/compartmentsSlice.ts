@@ -13,7 +13,7 @@ import { InitialState, ModelObj } from "../commonTypes";
 // Initial configuration
 const compartmentsAdapter = createEntityAdapter<Compartment>({
   selectId: (compartment) => compartment.id,
-  sortComparer: (a, b) => a.id.localeCompare(b.id)
+  sortComparer: (a, b) => a.location.localeCompare(b.location)
 });
 
 const initialState = compartmentsAdapter.getInitialState<InitialState>({
@@ -28,6 +28,14 @@ export const fetchCompartments = createAsyncThunk(
     Services.listenToDb((data) => {
       dispatch(databaseChanged(data));
     }, "compartments");
+  }
+);
+
+export const addNewCompartment = createAsyncThunk(
+  "compartments/addNewCompartment",
+  (compartment: Compartment) => {
+    const response = Services.addNewCompartment(compartment);
+    return response;
   }
 );
 
