@@ -1,16 +1,13 @@
 {
-  "name": "react-typescript",
+  "name": "storage-management",
   "version": "1.0.0",
-  "description": "React and TypeScript example starter project",
-  "keywords": [
-    "typescript",
-    "react",
-    "starter"
-  ],
+  "description": "",
+  "keywords": [],
   "main": "src/index.tsx",
   "dependencies": {
     "@reduxjs/toolkit": "1.6.1",
     "@types/react-router-dom": "5.1.8",
+    "dotenv": "10.0.0",
     "firebase": "8.8.0",
     "react": "17.0.2",
     "react-dom": "17.0.2",

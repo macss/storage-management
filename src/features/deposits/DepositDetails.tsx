@@ -36,14 +36,16 @@ const DepositDetails = ({
     );
   };
 
-  const handleRemoveClick = (item_id: string, compartment: Compartment) => (
-    e: React.MouseEvent<HTMLButtonElement>
-  ) => {
+  const handleRemoveClick = (
+    item_id: string,
+    compartment: Compartment,
+    quantity: number = 1
+  ) => (e: React.MouseEvent<HTMLButtonElement>) => {
     dispatch(
       removeItemFromCompartment({
         item_id,
         compartment,
-        quantity: 1
+        quantity
       })
     );
   };
@@ -74,6 +76,11 @@ const DepositDetails = ({
               {compartment.location.toUpperCase()} [{itemKeys.length} item{s}{" "}
               distinto{s}]{" "}
               <button
+                onClick={() => history.push(`/compartments/${compartment.id}`)}
+              >
+                + informações
+              </button>{" "}
+              <button
                 onClick={() => history.push(`/items/add/${compartment.id}`)}
               >
                 Adicionar item
@@ -94,6 +101,15 @@ const DepositDetails = ({
                     </button>{" "}
                     <button onClick={handleAddClick(item?.id, compartment)}>
                       +
+                    </button>{" "}
+                    <button
+                      onClick={handleRemoveClick(
+                        item?.id,
+                        compartment,
+                        compartment?.items[ik]
+                      )}
+                    >
+                      Remover Todos
                     </button>
                     <br />
                   </span>

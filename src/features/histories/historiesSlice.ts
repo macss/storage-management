@@ -1,11 +1,12 @@
 import {
   createAsyncThunk,
   createEntityAdapter,
+  createSelector,
   createSlice,
   PayloadAction
 } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
-import { History } from "../../models";
+import { Compartment, History } from "../../models";
 import Services from "../../services/firebaseServices";
 import { InitialState, ModelObj } from "../commonTypes";
 
@@ -63,3 +64,20 @@ export const {
   selectById: selectHistoryById,
   selectIds: selectHistoriesIds
 } = historiesAdapter.getSelectors<RootState>((state) => state.histories);
+
+export const selectCompartmentHistories = createSelector(
+  [
+    selectAllHistories,
+    (_: RootState, compartment: Compartment) => compartment.histories
+  ],
+  (histories, historiesKeys) => {
+    if (historiesKeys) {
+      return Object.keys(historiesKeys)
+        .map((k) => {
+          const [history] = histories.filter((hist) => hist.id === k);
+          return history;
+        })
+        .filter((ht) => Boolean(ht));
+    }
+  }
+);

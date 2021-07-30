@@ -17,6 +17,9 @@ const EditItemInfo = React.lazy(() => import("./features/items/EditItemInfo"));
 const NewCompartmentForm = React.lazy(() =>
   import("./features/compartments/NewCompartmentForm")
 );
+const CompartmentDetails = React.lazy(() =>
+  import("./features/compartments/CompartmentDetails")
+);
 const AddItemToCompartmentForm = React.lazy(() =>
   import("./features/items/AddItemToCompartmentForm")
 );
@@ -89,6 +92,12 @@ const routes: Route[] = [
     path: "/compartments/new/:deposit_id",
     exact: true,
     name: "Cadastrar novo compartimento"
+  },
+  {
+    component: CompartmentDetails,
+    path: "/compartments/:id",
+    exact: true,
+    name: "Detalhes"
   }
 ];
 

@@ -1,6 +1,7 @@
 import {
   createAsyncThunk,
   createEntityAdapter,
+  createSelector,
   createSlice,
   PayloadAction
 } from "@reduxjs/toolkit";
@@ -106,3 +107,19 @@ export const {
   selectById: selectItemById,
   selectIds: selectItemsIds
 } = itemsAdapter.getSelectors<RootState>((state) => state.items);
+
+export const selectItemsFromCompartment = createSelector(
+  [selectAllItems, (_: RootState, compartment: Compartment) => compartment],
+  (items, compartment) => {
+    if (compartment && compartment.items) {
+      return Object.keys(compartment.items)
+        .map((ik) => {
+          const [it] = items.filter((item) => item.id === ik);
+          return it;
+        })
+        .filter((it) => Boolean(it));
+    }
+
+    return [];
+  }
+);
